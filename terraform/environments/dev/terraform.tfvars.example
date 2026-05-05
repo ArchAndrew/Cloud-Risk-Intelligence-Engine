@@ -1,0 +1,2 @@
+environment          = "dev"
+tf_state_bucket_name = "machine-lite-tfstate-your-unique-suffix"

@@ -1,0 +1,12 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+
+# Lambda build artifacts
+*.zip
+
+# OS / misc
+.DS_Store
+Thumbs.db
