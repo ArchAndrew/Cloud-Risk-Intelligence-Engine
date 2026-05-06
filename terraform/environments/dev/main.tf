@@ -1,9 +1,12 @@
+#Bucket name MUST be globally unique. Bucket name referenced in .tfvars
 module "backend_bootstrap" {
   source = "../../modules/backend-bootstrap"
 
   bucket_name = var.tf_state_bucket_name
   environment = var.environment
 }
+
+#Adds cost governance layer
 
 module "budget_alerts" {
   source = "../../modules/budget-alerts"
@@ -14,6 +17,7 @@ module "budget_alerts" {
   alert_emails         = var.alert_emails
 }
 
+##Evidence storage layer: persists security data for audit, analysis, and compliance retention
 module "s3_evidence_store" {
   source = "../../modules/s3-evidence-store"
 
@@ -22,6 +26,7 @@ module "s3_evidence_store" {
   environment  = var.environment
 }
 
+#This creates the Lambda execution role and grants it least-privilege access to the evidence store.
 module "iam" {
   source = "../../modules/iam"
 
@@ -30,6 +35,7 @@ module "iam" {
   evidence_store_bucket_arn = module.s3_evidence_store.bucket_arn
 }
 
+##Normalization layer: processes and standardizes incoming security events for downstream analysis
 module "lambda_normalizer" {
   source = "../../modules/lambda-normalizer"
 
@@ -38,4 +44,29 @@ module "lambda_normalizer" {
   source_dir                 = "../../../src/normalizer"
   lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
   evidence_store_bucket_name = var.evidence_store_bucket_name
+  risk_engine_function_name   = module.lambda_risk_engine.lambda_risk_engine_name
+}
+
+#This creates your second Lambda: risk-engine.
+
+#Risk engine layer: scores normalized security events and classifies business/security impact
+module "lambda_risk_engine" {
+  source = "../../modules/lambda-risk-engine"
+
+  project_name               = "machine-lite"
+  environment                = var.environment
+  source_dir                 = "../../../src/risk_engine"
+  lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
+  evidence_store_bucket_name = var.evidence_store_bucket_name
+}
+
+#EventBridge connected to Lambda (Normalizer) = pipeline trigger
+module "eventbridge" {
+  source = "../../modules/eventbridge"
+
+  project_name = "machine-lite"
+  environment  = var.environment
+
+  lambda_normalizer_arn  = module.lambda_normalizer.lambda_normalizer_arn
+  lambda_normalizer_name = module.lambda_normalizer.lambda_normalizer_name
 }
