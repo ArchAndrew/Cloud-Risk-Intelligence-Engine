@@ -18,3 +18,26 @@ variable "evidence_store_bucket_name" {
   description = "Globally unique S3 bucket name for Machine-Lite security evidence storage"
   type        = string
 }
+
+variable "splunk_hec_url" {
+  description = "Splunk HEC endpoint URL"
+  type        = string
+}
+
+variable "splunk_hec_token" {
+  description = "Splunk HEC token"
+  type        = string
+  sensitive   = true
+}
+
+variable "splunk_index" {
+  description = "Splunk index for Machine-Lite risk events"
+  type        = string
+  default     = "machine_lite"
+}
+
+variable "splunk_sourcetype" {
+  description = "Splunk sourcetype for Machine-Lite risk events"
+  type        = string
+  default     = "aws:machine_lite:risk"
+}

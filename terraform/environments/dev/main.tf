@@ -44,7 +44,7 @@ module "lambda_normalizer" {
   source_dir                 = "../../../src/normalizer"
   lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
   evidence_store_bucket_name = var.evidence_store_bucket_name
-  risk_engine_function_name   = module.lambda_risk_engine.lambda_risk_engine_name
+  risk_engine_function_name  = module.lambda_risk_engine.lambda_risk_engine_name
 }
 
 #This creates your second Lambda: risk-engine.
@@ -58,6 +58,24 @@ module "lambda_risk_engine" {
   source_dir                 = "../../../src/risk_engine"
   lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
   evidence_store_bucket_name = var.evidence_store_bucket_name
+}
+
+#Splunk forwarding layer: sends enriched risk results from S3 evidence store into Splunk HEC
+module "splunk_forwarder" {
+  source = "../../modules/splunk-forwarder"
+
+  project_name              = "machine-lite"
+  environment               = var.environment
+  source_dir                = "${path.root}/../../../src/splunk_forwarder"
+  lambda_execution_role_arn = module.iam.lambda_execution_role_arn
+
+  evidence_store_bucket_name = module.s3_evidence_store.bucket_name
+  evidence_store_bucket_arn  = module.s3_evidence_store.bucket_arn
+
+  splunk_hec_url    = var.splunk_hec_url
+  splunk_hec_token  = var.splunk_hec_token
+  splunk_index      = var.splunk_index
+  splunk_sourcetype = var.splunk_sourcetype
 }
 
 #EventBridge connected to Lambda (Normalizer) = pipeline trigger
