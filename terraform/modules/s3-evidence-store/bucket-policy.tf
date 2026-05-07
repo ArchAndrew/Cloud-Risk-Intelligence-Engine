@@ -1,3 +1,4 @@
+#This enforces HTTPS-only access to the evidence store.
 resource "aws_s3_bucket_policy" "evidence_store_policy" {
   bucket = aws_s3_bucket.evidence_store.id
 

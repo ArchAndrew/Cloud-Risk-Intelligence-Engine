@@ -1,3 +1,4 @@
+#This creates a monthly AWS budget with alerts at 50%, 80%, and forecasted 100%.
 resource "aws_budgets_budget" "monthly_cost_budget" {
   name         = "${var.project_name}-${var.environment}-monthly-budget"
   budget_type  = "COST"

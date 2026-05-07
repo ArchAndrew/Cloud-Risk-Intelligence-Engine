@@ -23,3 +23,8 @@ variable "evidence_store_bucket_name" {
   description = "Name of the S3 bucket used to store normalized security evidence"
   type        = string
 }
+
+variable "risk_engine_function_name" {
+  description = "Name of the Lambda risk engine function invoked by the normalizer"
+  type        = string
+}

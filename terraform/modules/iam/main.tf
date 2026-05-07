@@ -1,3 +1,4 @@
+#This creates the Lambda execution role and attaches basic CloudWatch Logs permissions.
 resource "aws_iam_role" "lambda_execution_role" {
   name = "${var.project_name}-${var.environment}-lambda-execution-role"
 

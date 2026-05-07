@@ -1,12 +1,21 @@
-# Terraform
-.terraform/
-*.tfstate
-*.tfstate.*
+# Sensitive local environment files
+docker-compose.yml
+.env
+*.tfvars
 terraform.tfvars
 
-# Lambda build artifacts
-*.zip
+# Terraform local state
+.terraform/
+*.tfstate
+*.tfstate.backup
 
-# OS / misc
+# Python cache
+__pycache__/
+*.pyc
+
+# VSCode
+.vscode/
+
+# OS files
 .DS_Store
 Thumbs.db

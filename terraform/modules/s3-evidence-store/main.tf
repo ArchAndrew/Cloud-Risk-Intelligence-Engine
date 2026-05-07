@@ -1,3 +1,4 @@
+#This bucket stores normalized events, risk outputs, AI summaries, and audit evidence.
 resource "aws_s3_bucket" "evidence_store" {
   bucket = var.bucket_name
 

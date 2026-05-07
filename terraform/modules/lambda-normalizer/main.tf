@@ -1,3 +1,4 @@
+#This creates the Lambda that will normalize incoming security events before they move deeper into the risk engine.
 resource "aws_lambda_function" "normalizer" {
   function_name = "${var.project_name}-${var.environment}-normalizer"
 
@@ -16,6 +17,7 @@ resource "aws_lambda_function" "normalizer" {
       ENVIRONMENT           = var.environment
       EVIDENCE_STORE_BUCKET = var.evidence_store_bucket_name
       PROJECT_NAME          = var.project_name
+      RISK_ENGINE_FUNCTION_NAME = var.risk_engine_function_name
     }
   }
 

@@ -1,3 +1,4 @@
+#This rule listens for Machine-Lite security events and prepares them to route into the normalizer.
 resource "aws_cloudwatch_event_rule" "security_finding_rule" {
   name           = "${var.project_name}-${var.environment}-security-finding-rule"
   description    = "Routes Machine-Lite security findings to the normalizer Lambda"
