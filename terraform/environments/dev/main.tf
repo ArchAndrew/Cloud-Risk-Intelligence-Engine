@@ -88,3 +88,42 @@ module "eventbridge" {
   lambda_normalizer_arn  = module.lambda_normalizer.lambda_normalizer_arn
   lambda_normalizer_name = module.lambda_normalizer.lambda_normalizer_name
 }
+
+#CloudTrail module enables centralized AWS audit logging
+#for API activity, governance visibility, incident investigation,
+#and evidence collection within the Machine-Lite pipeline.
+module "cloudtrail" {
+  source = "../../modules/cloudtrail"
+
+  environment            = var.environment
+  trail_name             = "machine-lite-${var.environment}-trail"
+  cloudtrail_bucket_name = "machine-lite-cloudtrail-${var.environment}-finch"
+}
+
+#GuardDuty enables native AWS threat detection
+#and continuous security finding generation
+#for Machine-Lite detection analytics.
+module "guardduty" {
+  source = "../../modules/guardduty"
+
+  environment = var.environment
+}
+
+#Security Hub module centralizes AWS security findings
+#and compliance posture signals for governance reporting,
+#control visibility, and Machine-Lite risk intelligence workflows.
+module "securityhub" {
+  source = "../../modules/securityhub"
+
+  environment = var.environment
+}
+
+# SNS approval module enables human-in-the-loop review
+# for high-risk findings before response, containment,
+# or escalation workflows are triggered.
+module "sns_approval" {
+  source = "../../modules/sns-approval"
+
+  environment  = var.environment
+  alert_emails = var.alert_emails
+}
