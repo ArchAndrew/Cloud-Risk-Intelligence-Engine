@@ -14,6 +14,7 @@ resource "aws_iam_role" "lambda_execution_role" {
         }
 
         Action = "sts:AssumeRole"
+        
       }
     ]
   })
@@ -27,4 +28,25 @@ resource "aws_iam_role" "lambda_execution_role" {
 resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   role       = aws_iam_role.lambda_execution_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# This inline policy grants the Lambda execution role permission to invoke
+# Amazon Bedrock foundation models for AI-assisted risk analysis.
+resource "aws_iam_role_policy" "lambda_bedrock_access" {
+  name = "${var.project_name}-${var.environment}-lambda-bedrock-access"
+  role = aws_iam_role.lambda_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowBedrockInvokeModel"
+        Effect = "Allow"
+        Action = [
+          "bedrock:InvokeModel"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
 }

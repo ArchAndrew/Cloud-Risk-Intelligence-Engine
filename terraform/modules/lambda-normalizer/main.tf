@@ -14,12 +14,10 @@ resource "aws_lambda_function" "normalizer" {
 
   environment {
     variables = {
-      ENVIRONMENT           = var.environment
-      EVIDENCE_STORE_BUCKET = var.evidence_store_bucket_name
-      PROJECT_NAME          = var.project_name
-      RISK_ENGINE_FUNCTION_NAME = var.risk_engine_function_name
-    }
+    EVIDENCE_BUCKET           = var.evidence_bucket_name
+    RISK_ENGINE_FUNCTION_NAME = var.risk_engine_function_name
   }
+}
 
   tags = {
     Name    = "${var.project_name}-${var.environment}-normalizer"

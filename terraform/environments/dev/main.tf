@@ -39,14 +39,13 @@ module "iam" {
 module "lambda_normalizer" {
   source = "../../modules/lambda-normalizer"
 
-  project_name               = "machine-lite"
-  environment                = var.environment
-  source_dir                 = "../../../src/normalizer"
-  lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
-  evidence_store_bucket_name = var.evidence_store_bucket_name
-  risk_engine_function_name  = module.lambda_risk_engine.lambda_risk_engine_name
+  project_name              = "machine-lite"
+  environment               = var.environment
+  source_dir                = "../../../src/normalizer"
+  lambda_execution_role_arn = module.iam.lambda_execution_role_arn
+  risk_engine_function_name = module.lambda_risk_engine.lambda_risk_engine_name
+  evidence_bucket_name      = module.s3_evidence_store.bucket_name
 }
-
 #This creates your second Lambda: risk-engine.
 
 #Risk engine layer: scores normalized security events and classifies business/security impact
@@ -58,6 +57,7 @@ module "lambda_risk_engine" {
   source_dir                 = "../../../src/risk_engine"
   lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
   evidence_store_bucket_name = var.evidence_store_bucket_name
+  bedrock_model_id           = module.bedrock.foundation_model
 }
 
 #Splunk forwarding layer: sends enriched risk results from S3 evidence store into Splunk HEC
@@ -118,12 +118,25 @@ module "securityhub" {
   environment = var.environment
 }
 
-# SNS approval module enables human-in-the-loop review
-# for high-risk findings before response, containment,
-# or escalation workflows are triggered.
+#SNS approval module enables human-in-the-loop review
+#for high-risk findings before response, containment,
+#or escalation workflows are triggered.
 module "sns_approval" {
   source = "../../modules/sns-approval"
 
-  environment  = var.environment
-  alert_emails = var.alert_emails
+  environment               = var.environment
+  alert_emails              = var.alert_emails
+  approval_handler_zip_path = "../../../dist/approval_handler.zip"
+}
+
+#Bedrock module provides the approved foundation model configuration used to
+#generate AI-assisted executive summaries, analyst narratives, remediation
+#recommendations, and compliance impact explanations after deterministic risk
+#scoring and control mapping have been completed by the risk engine.
+#AI serves strictly as an enrichment layer. Deterministic scoring, compliance
+#mappings, and human review remain the authoritative decision mechanisms.
+module "bedrock" {
+  source = "../../modules/bedrock"
+
+  foundation_model = "amazon.nova-lite-v1:0"
 }

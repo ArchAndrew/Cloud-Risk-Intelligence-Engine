@@ -19,12 +19,12 @@ variable "lambda_execution_role_arn" {
   type        = string
 }
 
-variable "evidence_store_bucket_name" {
-  description = "Name of the S3 bucket used to store normalized security evidence"
+variable "risk_engine_function_name" {
+  description = "Name of the Lambda risk engine function invoked by the normalizer"
   type        = string
 }
 
-variable "risk_engine_function_name" {
-  description = "Name of the Lambda risk engine function invoked by the normalizer"
+variable "evidence_bucket_name" {
+  description = "S3 evidence bucket name for normalized findings"
   type        = string
 }
