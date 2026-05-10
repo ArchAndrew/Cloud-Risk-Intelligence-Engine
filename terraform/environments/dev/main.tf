@@ -58,6 +58,8 @@ module "lambda_risk_engine" {
   lambda_execution_role_arn  = module.iam.lambda_execution_role_arn
   evidence_store_bucket_name = var.evidence_store_bucket_name
   bedrock_model_id           = module.bedrock.foundation_model
+  approval_topic_arn         = module.sns_approval.approval_topic_arn
+
 }
 
 #Splunk forwarding layer: sends enriched risk results from S3 evidence store into Splunk HEC

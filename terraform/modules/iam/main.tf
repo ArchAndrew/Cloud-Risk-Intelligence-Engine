@@ -50,3 +50,22 @@ resource "aws_iam_role_policy" "lambda_bedrock_access" {
     ]
   })
 }
+
+resource "aws_iam_role_policy" "lambda_sns_publish_access" {
+  name = "${var.project_name}-${var.environment}-lambda-sns-publish-access"
+  role = aws_iam_role.lambda_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowSnsPublish"
+        Effect = "Allow"
+        Action = [
+          "sns:Publish"
+        ]
+        Resource = "*"
+      }
+    ]
+  })
+}

@@ -8,11 +8,14 @@ from scoring import calculate_risk_score, recommended_action
 from severity_classifier import classify_severity
 from control_mapper import map_controls
 
+
 s3_client = boto3.client("s3")
 bedrock_client = boto3.client("bedrock-runtime")
+sns_client = boto3.client("sns")
 
 EVIDENCE_STORE_BUCKET = os.environ["EVIDENCE_STORE_BUCKET"]
 BEDROCK_MODEL_ID = os.environ.get("BEDROCK_MODEL_ID")
+APPROVAL_TOPIC_ARN = os.environ.get("APPROVAL_TOPIC_ARN")
 
 
 def build_business_impact(finding_type: str, severity: str, risk_score: int) -> str:
@@ -141,11 +144,93 @@ Finding:
         }
 
 
+def publish_sns_alert(risk_result: dict) -> dict:
+    """
+    Publishes high-risk findings to SNS for human-in-the-loop review.
+    """
+    risk_score = risk_result.get("risk_score", 0)
+    finding_type = risk_result.get("finding_type", "unknown")
+
+    print(f"SNS threshold check: risk_score={risk_score}")
+
+    if risk_score < 90:
+        print("SNS threshold not met. Skipping publish.")
+        return {
+            "sns_publish_status": "skipped",
+            "sns_publish_reason": "risk_score_below_threshold",
+        }
+
+    if not APPROVAL_TOPIC_ARN:
+        print("SNS threshold met, but APPROVAL_TOPIC_ARN is missing. Skipping publish.")
+        return {
+            "sns_publish_status": "skipped",
+            "sns_publish_reason": "approval_topic_arn_missing",
+        }
+
+    message = {
+        "alert_type": "critical_security_finding",
+        "finding_type": finding_type,
+        "risk_score": risk_score,
+        "risk_classification": risk_result.get("risk_classification"),
+        "recommended_action": risk_result.get("recommended_action"),
+        "executive_summary": risk_result.get("executive_summary"),
+        "analyst_summary": risk_result.get("analyst_summary"),
+        "evidence_bucket": EVIDENCE_STORE_BUCKET,
+        "event_id": risk_result.get("event_id"),
+        "processed_at": risk_result.get("processed_at"),
+        "full_result": risk_result,
+    }
+
+    try:
+        print("SNS threshold met. Attempting publish...")
+
+        sns_response = sns_client.publish(
+            TopicArn=APPROVAL_TOPIC_ARN,
+            Subject=f"Machine-Lite Critical Finding: {finding_type}",
+            Message=json.dumps(message, indent=2),
+        )
+
+        print("SNS publish response:", json.dumps(sns_response))
+
+        return {
+            "sns_publish_status": "success",
+            "sns_message_id": sns_response.get("MessageId"),
+        }
+
+    except Exception as error:
+        print(f"SNS publish failed: {str(error)}")
+        return {
+            "sns_publish_status": "failed",
+            "sns_publish_error": str(error),
+        }
+
+
 def lambda_handler(event, context):
     print("Incoming normalized event:", json.dumps(event))
 
-    detail = event.get("detail", {})
-    finding_type = detail.get("finding_type", "unknown").lower()
+    normalized_event = event.get("normalized_event", event)
+
+    detail = normalized_event.get("detail")
+    if not detail:
+        detail = normalized_event.get("original_event", {}).get("detail", {})
+
+    finding_type = (
+        detail.get("finding_type")
+        or normalized_event.get("finding_type")
+        or "unknown"
+    ).lower()
+
+    if "severity" not in detail and "original_severity" in normalized_event:
+        detail["severity"] = normalized_event["original_severity"]
+
+    if "exposure" not in detail and "exposure" in normalized_event:
+        detail["exposure"] = normalized_event["exposure"]
+
+    if "identity_impact" not in detail and "identity_impact" in normalized_event:
+        detail["identity_impact"] = normalized_event["identity_impact"]
+
+    if "finding_type" not in detail and finding_type != "unknown":
+        detail["finding_type"] = finding_type
 
     risk_score = calculate_risk_score(detail)
     risk_classification = classify_severity(risk_score)
@@ -160,12 +245,12 @@ def lambda_handler(event, context):
     processed_at = datetime.now(timezone.utc).isoformat()
 
     risk_result = {
-        "event_id": event.get("event_id", "unknown"),
-        "source": event.get("source", "unknown"),
-        "detail_type": event.get("detail_type", "unknown"),
-        "account": event.get("account", "unknown"),
-        "region": event.get("region", "unknown"),
-        "event_time": event.get("time"),
+        "event_id": normalized_event.get("event_id", "unknown"),
+        "source": normalized_event.get("source", "unknown"),
+        "detail_type": normalized_event.get("detail_type", "unknown"),
+        "account": normalized_event.get("account", "unknown"),
+        "region": normalized_event.get("region", "unknown"),
+        "event_time": normalized_event.get("time"),
         "finding_type": finding_type,
         "original_severity": detail.get("severity", "unknown"),
         "risk_score": risk_score,
@@ -175,11 +260,14 @@ def lambda_handler(event, context):
         "control_mappings": control_mappings,
         "pipeline_stage": "risk_scored",
         "processed_at": processed_at,
-        "original_event": event,
+        "original_event": normalized_event,
     }
 
     ai_enrichment = generate_ai_enrichment(risk_result)
     risk_result.update(ai_enrichment)
+
+    sns_result = publish_sns_alert(risk_result)
+    risk_result.update(sns_result)
 
     s3_key = (
         "risk-results/"
@@ -212,6 +300,8 @@ def lambda_handler(event, context):
                 "control_mappings": control_mappings,
                 "ai_enrichment_status": risk_result.get("ai_enrichment_status"),
                 "executive_summary": risk_result.get("executive_summary"),
+                "sns_publish_status": risk_result.get("sns_publish_status"),
+                "sns_message_id": risk_result.get("sns_message_id"),
             }
         ),
     }

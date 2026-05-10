@@ -17,6 +17,7 @@ resource "aws_lambda_function" "risk_engine" {
       EVIDENCE_STORE_BUCKET = var.evidence_store_bucket_name
       PROJECT_NAME          = var.project_name
       BEDROCK_MODEL_ID      = var.bedrock_model_id
+      APPROVAL_TOPIC_ARN    = var.approval_topic_arn
     }
   }
 

@@ -23,3 +23,8 @@ variable "bedrock_model_id" {
   description = "Amazon Bedrock foundation model used for AI-assisted enrichment"
   type        = string
 }
+
+variable "approval_topic_arn" {
+  description = "SNS topic ARN used for high-risk finding approval notifications"
+  type        = string
+}
