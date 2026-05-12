@@ -205,25 +205,27 @@ Versioning and lifecycle policies support forensic retention and auditability.
 
 ## Splunk Dashboards
 
+Machine-Lite publishes enriched findings to Splunk Enterprise, where telemetry is transformed into role-based dashboards for executive reporting, detection engineering, compliance intelligence, and incident investigation. This enables stakeholders across the organization to view the same underlying data through business, operational, and governance lenses.
+
 ### Executive Overview
 High-level risk trends and KPI summaries.
 
-**Insert image here:** `09-splunk-executive-overview.png`
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/dashboards/splunk/Dashboard_Executive_Overview.png style="width:900px;">
 
 ### Detection Analytics
 Threat timelines, MITRE ATT&CK distributions, and high-risk identities.
 
-**Insert image here:** `10-splunk-detection-analytics.png`
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/dashboards/splunk/Dashboard_Detection_Analytics.png style="width:900px;">
 
 ### Compliance Intelligence
 Framework and control impact visualizations.
 
-**Insert image here:** `11-splunk-compliance-intelligence.png`
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/dashboards/splunk/Dashboard_Compliance_Intel.png style="width:900px;">
 
 ### Incident Drilldown
 Detailed analyst investigation workspace.
 
-**Insert image here:** `12-splunk-incident-drilldown.png`
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/dashboards/splunk/Dashboard_Incident_Drilldown.png style="width:900px;">
 
 ---
 
@@ -297,32 +299,6 @@ This demonstrates a complete detection-to-intelligence workflow.
 - I replaced ngrok with Cloudflare Tunnel to simplify TLS connectivity.
 - I integrated SNS to create a human-in-the-loop escalation workflow.
 - I preserved enriched findings as versioned evidence artifacts in S3.
-
----
-
-## Interview Talking Points
-
-- Why did you score findings before invoking AI?
-- Why did you use S3 as an evidence store?
-- How does SNS support governance?
-- What trade-offs did you make to reduce cost?
-- How does Bedrock add business value?
-- Why did you choose a serverless architecture?
-
----
-
-## Repository Structure
-
-```text
-terraform/
-src/
-dashboards/
-docs/
-diagrams/
-screenshots/
-sample-data/
-scripts/
-```
 
 ---
 
