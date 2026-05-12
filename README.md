@@ -194,7 +194,12 @@ Each processed finding is stored in Amazon S3 with:
 
 Versioning and lifecycle policies support forensic retention and auditability.
 
-**Insert image here:** `08-s3-ai-enriched-evidence-object.png`
+### S3 AI enriched evidence object -_the S3 Properties view_
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/s3_ai_enriched_evidence_object1.png style="width:900px;">
+
+### The opened JSON object in browser
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/s3_ai_enriched_evidence_object2.png style="width:900px;">
+
 
 ---
 
