@@ -170,11 +170,14 @@ The AI does not perform autonomous remediation or override deterministic scoring
 
 Critical findings trigger Amazon SNS notifications to ensure a human analyst reviews the event before any containment actions are taken.
 
-**Insert image here:** `03-iam-bedrock-and-sns-policy.png`
+### IAM policy permissions for Bedrock and Lambda trigger to SNS
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/IAM_Policy_Bedrock_SNS.png style="width:900px;">
 
-**Insert image here:** `04-cloudwatch-bedrock-success.png`
+### Cloudwatch logs Bedrock's success
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/Cloudwatch_Bedrock_Success.png style="width:900px;">
 
-**Insert image here:** `07-sns-email-critical-alert.png`
+### SNS emails critical alert
+<img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/SNS_Critical_Email_1.png style="width:900px;">
 
 ---
 
