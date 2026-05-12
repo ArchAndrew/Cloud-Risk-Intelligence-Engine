@@ -74,7 +74,7 @@ Machine-Lite implements the following end-to-end workflow:
 - Human approval and escalation workflows
 - Executive and analyst dashboards
 
-<img src= https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/key-outcomes-splunk-forwarding-enabled.png style="width:700px;">
+<img src= https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/key-outcomes-splunk-forwarding-enabled.png style="width:900px;">
 
 ---
 
