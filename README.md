@@ -317,5 +317,5 @@ The platform is deterministic, explainable, cost-efficient, and designed with go
 
 ---
 
-thee_architect_was_Here
+_Architecture by: thee_architect_was_Here_
 
