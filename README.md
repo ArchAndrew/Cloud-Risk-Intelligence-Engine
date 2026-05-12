@@ -227,6 +227,7 @@ Detailed analyst investigation workspace.
 
 <img src=https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/dashboards/splunk/Dashboard_Incident_Drilldown.png style="width:900px;">
 
+👉 [View Full SOC Dashboard (PDF)](https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/dashboards/splunk/Machine-Lite%20_%20Cloud%20Risk%20Intelligence%20Platform.pdf)
 ---
 
 ## Security Controls Matrix
