@@ -46,7 +46,6 @@ Machine-Lite implements the following end-to-end workflow:
 8. Findings are forwarded to Splunk Enterprise through Cloudflare Tunnel.
 9. Executive and analyst dashboards provide operational visibility.
 
-**Insert image here:** `01-architecture-diagram.png`
 
 ---
 
@@ -75,7 +74,7 @@ Machine-Lite implements the following end-to-end workflow:
 - Human approval and escalation workflows
 - Executive and analyst dashboards
 
-**Insert image here:** `02-terraform-apply.png`
+<img src= https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/screenshots/key-outcomes-splunk-forwarding-enabled.png style="width:700px;">
 
 ---
 
