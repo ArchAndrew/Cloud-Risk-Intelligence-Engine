@@ -12,7 +12,7 @@ The platform ingests security events through Amazon EventBridge, normalizes the 
 
 Machine-Lite demonstrates how serverless architecture, generative AI, and disciplined security engineering can be combined to create a cost-efficient cloud-native security platform.
 
-**Insert image here:** `01-architecture-diagram.png`
+<img src= https://github.com/ArchAndrew/Cloud-Risk-Intelligence-Engine/blob/main/diagrams/Cloud-Risk-Intelligence-Engine_Diagram.png style="width:1200px;">
 
 ---
 
